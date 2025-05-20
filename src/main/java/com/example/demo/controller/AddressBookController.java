@@ -21,27 +21,30 @@ public class AddressBookController {
     private IAddressBookService service;
 
     @GetMapping
-    public ResponseEntity<String> getAll() {
+    public ResponseEntity<List<AddressBook>> getAll() {
         return ResponseEntity.ok(service.getAllEntries());
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<String> getById(@PathVariable int id) {
-        return ResponseEntity.ok(service.getEntryById(id));
+    public ResponseEntity<?> getById(@PathVariable int id) {
+        AddressBook entry = service.getEntryById(id);
+        return (entry != null) ? ResponseEntity.ok(entry) : ResponseEntity.notFound().build();
     }
 
     @PostMapping
-    public ResponseEntity<String> create(@RequestBody AddressBookDTO dto) {
+    public ResponseEntity<AddressBook> create(@RequestBody AddressBookDTO dto) {
         return ResponseEntity.ok(service.createEntry(dto));
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<String> update(@PathVariable int id, @RequestBody AddressBookDTO dto) {
-        return ResponseEntity.ok(service.updateEntry(id, dto));
+    public ResponseEntity<?> update(@PathVariable int id, @RequestBody AddressBookDTO dto) {
+        AddressBook updated = service.updateEntry(id, dto);
+        return (updated != null) ? ResponseEntity.ok(updated) : ResponseEntity.notFound().build();
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<String> delete(@PathVariable int id) {
-        return ResponseEntity.ok(service.deleteEntry(id));
+    public ResponseEntity<?> delete(@PathVariable int id) {
+        service.deleteEntry(id);
+        return ResponseEntity.ok("Deleted entry with ID: " + id);
     }
 }
